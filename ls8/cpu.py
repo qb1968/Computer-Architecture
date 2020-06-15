@@ -2,15 +2,36 @@
 
 import sys
 
+HLT = 0b00000001
+LDI = 0b10000010
+PRN = 0b01000111
+
 class CPU:
     """Main CPU class."""
 
     def __init__(self):
         """Construct a new CPU."""
-        pass
+        self.pc = 0
+        self.ram = [0] * 8
+        self.reg = [0] * 256
+
+        self.PC = 0
+        self.IR = 0
+        self.MAR = 0
+        self.MDR = 0
+        self.FL = 0
+        
+    def ram_read(self, address):
+        return self.ram[address]
+
+    def ram_write(self, value, address):
+        self.ram[address] = value
+            
+
+        
 
     def load(self):
-        """Load a program into memory."""
+        """Load a program into ram."""
 
         address = 0
 
@@ -59,7 +80,25 @@ class CPU:
             print(" %02X" % self.reg[i], end='')
 
         print()
-
+    
+        
     def run(self):
         """Run the CPU."""
-        pass
+        logic = True
+        while logic:
+            IR = self.ram_read(self.pc)#Read memory address
+            operand_a = self.ram_read(self.pc + 1)
+            operand_b = self.ram_read(self.pc + 2)
+            if IR == LDI:# Read PC
+                self.reg[operand_a] = operand_b
+                self.pc += 3
+            elif IR == PRN:
+                print(self.reg[operand_a])
+                self.pc += 2
+            elif IR == HLT:
+                self.pc += 1
+                break
+            else:
+                self.pc += 1
+                print(f"{IR} - command is not available")
+                sys.exit()
