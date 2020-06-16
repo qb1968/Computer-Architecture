@@ -87,13 +87,13 @@ class CPU:
         logic = True
         while logic:
             IR = self.ram_read(self.pc)#Read memory address
-            operand_a = self.ram_read(self.pc + 1)
-            operand_b = self.ram_read(self.pc + 2)
+            op_a = self.ram_read(self.pc + 1)
+            op_b = self.ram_read(self.pc + 2)
             if IR == LDI:# Read PC
-                self.reg[operand_a] = operand_b
+                self.reg[op_a] = op_b
                 self.pc += 3
             elif IR == PRN:
-                print(self.reg[operand_a])
+                print(self.reg[op_a])
                 self.pc += 2
             elif IR == HLT:
                 self.pc += 1
