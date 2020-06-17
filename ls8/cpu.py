@@ -1,3 +1,6 @@
+# MDR = Memory Data Register
+# MAR = Memory Address Register
+
 import sys
 
 LDI = 0b10000010
@@ -14,7 +17,7 @@ class CPU:
         self.pc = 0
         self.reg = [0] * 8
         self.ram = [0] * 256
-        self.SP = 0xf3
+        
 
     def load(self, filename):
         """Load a program into memory."""
@@ -45,11 +48,11 @@ class CPU:
 
 
     def ram_read(self, address):
-        # The MAR contains the address that is being read or written to.
+        # The MAR contains address being read or written to.
         return self.ram[address]
 
     def ram_write(self, address, value):
-        # The MDR contains the data that was read or the data to write. 
+        # The MDR contains data that was read or data to be written. 
         self.ram[address] = value
 
 
@@ -84,7 +87,6 @@ class CPU:
     def run(self):
         """Run the CPU."""
         while True:
-            IR = self.ram_read(self.pc)
             opcode = self.ram[self.pc]
             operand_a = self.ram_read(self.pc + 1)
             operand_b = self.ram_read(self.pc + 2)
