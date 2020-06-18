@@ -9,6 +9,9 @@ HLT = 0b00000001
 MUL = 0b10100010
 PUSH = 0b01000101
 POP = 0b01000110
+CALL = 0b01010000
+RET = 0b00010001
+ADD = 0b10100000
 
 class CPU:
     """Main CPU class."""
@@ -113,7 +116,20 @@ class CPU:
                 operand_a = self.ram_read(self.pc + 1)
                 self.reg[operand_a] = self.ram_read(self.SP+1)
                 self.SP += 1
-                self.pc += 2    
+                self.pc += 2
+            elif ops == CALL:
+                    # print(operand_a)
+                operand_a = self.ram_read(self.pc + 1)
+                self.SP -= 1
+                self.ram_write(self.SP, self.pc + 2)
+                self.pc = self.reg[operand_a]
+                # print(self.pc)
+            elif ops == RET:
+                self.pc = self.ram_read(self.SP)
+                self.SP += 1
+            elif ops == ADD:
+                self.pc +=3
+                self.alu("ADD", operand_a, operand_b)        
             elif ops == HLT:
                 sys.exit(0)
             else:
