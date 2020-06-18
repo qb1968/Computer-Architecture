@@ -7,6 +7,8 @@ LDI = 0b10000010
 PRN = 0b01000111
 HLT = 0b00000001
 MUL = 0b10100010
+PUSH = 0b01000101
+POP = 0b01000110
 
 class CPU:
     """Main CPU class."""
@@ -17,6 +19,7 @@ class CPU:
         self.pc = 0
         self.reg = [0] * 8
         self.ram = [0] * 256
+        self.SP = 0xf3
         
 
     def load(self, filename):
@@ -87,21 +90,31 @@ class CPU:
     def run(self):
         """Run the CPU."""
         while True:
-            opcode = self.ram[self.pc]
+            ops = self.ram[self.pc]
             operand_a = self.ram_read(self.pc + 1)
             operand_b = self.ram_read(self.pc + 2)
             # print(IR, self.pc, operand_a, operand_b)
-            if opcode == LDI:
+            if ops == LDI:
                 self.reg[operand_a] = operand_b
                 # print(self.pc, self.reg, self.ram)
                 self.pc += 3
-            elif opcode == PRN:
+            elif ops == PRN:
                 print(self.reg[operand_a])
                 self.pc += 2
-            elif opcode == MUL:
-                self.alu(opcode, operand_a, operand_b)
+            elif ops == MUL:
+                self.alu(ops, operand_a, operand_b)
                 self.pc += 3
-            elif opcode == HLT:
+            elif ops == PUSH:
+                operand_a = self.ram_read(self.pc + 1) 
+                self.ram_write(self.SP, self.reg[operand_a])
+                self.pc += 2
+                self.SP -= 1
+            elif ops == POP:
+                operand_a = self.ram_read(self.pc + 1)
+                self.reg[operand_a] = self.ram_read(self.SP+1)
+                self.SP += 1
+                self.pc += 2    
+            elif ops == HLT:
                 sys.exit(0)
             else:
                 print(f"Did not work")
